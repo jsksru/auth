@@ -1,13 +1,12 @@
-import express from 'express';
-import Router from './routes';
-import errorHandler from './middlewares/errors.middleware';
+import config from './config';
+import https from 'https';
+import fs from 'fs';
+import app from './app';
 
-const app = express();
+const PRIVATE_KEY = fs.readFileSync(config.https.key, 'utf8');
+const CERTIFICATE = fs.readFileSync(config.https.cert, 'utf8');
+const API_PORT = config.api.port;
 
-app.use(express.json());
-app.use(Router);
+const httpsServer = https.createServer({ key: PRIVATE_KEY, cert: CERTIFICATE }, app);
 
-app.use('*', errorHandler.notFound);
-app.use(errorHandler.allErrors);
-
-app.listen(3000, () => console.log('Server listening on 3000 port...'));
+httpsServer.listen(API_PORT, () => console.log(`Server listening on ${API_PORT} port...`));
