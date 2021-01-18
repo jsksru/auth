@@ -9,4 +9,4 @@ const API_PORT = config.api.port;
 
 const httpsServer = https.createServer({ key: PRIVATE_KEY, cert: CERTIFICATE }, app);
 
-httpsServer.listen(API_PORT, () => console.log(`Server listening on ${API_PORT} port...`));
+httpsServer.listen(API_PORT, '0.0.0.0', () => console.log(`Server listening on ${API_PORT} port...`));
