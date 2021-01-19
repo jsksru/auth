@@ -1,21 +1,26 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
+const { env } = process;
+
 const config = {
   api: {
-    domain: 'localhost',
-    port: 3043,
-    prefix: '/api/v1',
+    domain: env.API_DOMAIN as string || 'localhost',
+    port: Number(env.API_PORT) || 3043,
+    prefix: env.API_PREFIX as string || '/api/v1',
   },
   tokens: {
     access: {
-      secret: 'u2AMvFoxGP9rnbWcTBeK2VEMXUg4y9urj6eNvuWfZOuI7o0cIdDbDpBjvmXNSo39VNCCsPOpYvsQxNiAqK8Bzw==',
-      expire: '5m',
+      secret: env.JWT_SECRET as string || 'Use random Secret string in .env file!!!',
+      expire: env.JWT_EXPIRE as string || '10m',
     },
     refresh: {
-      lifetime: '14d',
+      lifetime: env.REFRESH_LIFETIME as string || '14d',
     }
   },
   https: {
-    key: './https_private_key.key',
-    cert: './https_certificate.crt',
+    key: env.HTTPS_KEY_FILE as string || './https_private_key.key',
+    cert: env.HTTPS_CERT_FILE as string || './https_certificate.crt',
   }
 };
 
