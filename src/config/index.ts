@@ -21,6 +21,9 @@ const config = {
   https: {
     key: env.HTTPS_KEY_FILE as string || './https_private_key.key',
     cert: env.HTTPS_CERT_FILE as string || './https_certificate.crt',
+  },
+  db: {
+    connectionString: env.MONGO_DB_STRING as string || '',
   }
 };
 
