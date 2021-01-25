@@ -5,11 +5,11 @@ import jwt from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
 import UserModel from '../models/user.model';
 import TokenModel from '../models/token.model';
+import AnswerCreator from '../utils/answerCreator';
+import { sendTokens } from '../utils/tokenCreator';
 
 const ACCESS_SECRET = config.tokens.access.secret;
 const ACCESS_EXPIRE = config.tokens.access.expire;
-const API_PREFIX = config.api.prefix;
-const API_DOMAIN = config.api.domain;
 
 export const login = async (req: Request, res: Response) => {
   try {
@@ -39,18 +39,9 @@ export const login = async (req: Request, res: Response) => {
     });
     await token.save();
 
-    res.cookie('refresh', newUuid, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-      domain: API_DOMAIN,
-      path: API_PREFIX + '/auth/refresh'
-    });
-
-    res.set('Authorization', 'Bearer ' + accessToken);
-    res.status(200).json({ succeed: true });
+    sendTokens(res, newUuid, accessToken);
   } catch (err) {
-    res.status(401).json({ error: true, message: err.message });
+    AnswerCreator.error.unauthorized(res, err.message);
   }
 };
 
@@ -69,24 +60,16 @@ export const refresh = async (req: Request, res: Response) => {
     const user = UserModel.findOne({ _id: resultToken.userId });
     if (!user) throw new Error('User not found');
 
-    TokenModel.findByIdAndUpdate({ _id: resultToken._id }, {
+    await TokenModel.findByIdAndUpdate(resultToken._id, {
       refresh: newUuid,
       lastUpdate: Date.now()
     });
 
     const accessToken = jwt.sign({ userId: user._id, username: user.username }, ACCESS_SECRET, { expiresIn: ACCESS_EXPIRE });
 
-    res.cookie('refresh', newUuid, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-      domain: API_DOMAIN,
-      path: API_PREFIX + '/auth/refresh'
-    });
-    res.set('Authorization', 'Bearer ' + accessToken);
-    res.status(200).json({ succeed: true });
+    sendTokens(res, newUuid, accessToken);
   } catch (err) {
-    res.status(401).json({ error: true, message: err.message });
+    AnswerCreator.error.unauthorized(res, err.message);
   }
 };
 

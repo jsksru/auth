@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
+import AnswerCreator from '../utils/answerCreator';
 
 export const notFound = (req: Request, res: Response) => {
-  res.status(404).json({ error: true, message: 'Not Found!'});
+  AnswerCreator.error.notFound(res, 'Not Found!');
 };
 
 export const allErrors = (err: Error, req: Request, res: Response, next: NextFunction) => {
-  res.status(500).json({ error: true, message: err.message});
+  AnswerCreator.error.serverError(res, err.message);
 };
 
 export default {
