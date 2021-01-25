@@ -18,7 +18,7 @@ export default model('Token', new Schema({
   userAgent: String,
   ipAddress: String,
   lastUpdate: {
-    type: Date,
+    type: Number,
     default: Date.now(),
   },
   blocked: {
