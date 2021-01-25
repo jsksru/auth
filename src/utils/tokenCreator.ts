@@ -19,4 +19,4 @@ export const sendTokens = (res: Response, newUuid: string, accessToken: string) 
 
 export default {
   sendTokens,
-}
+};

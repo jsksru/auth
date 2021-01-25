@@ -18,4 +18,4 @@ export const SuccessResponse = {
 export default {
   error: ErrorResponse,
   success: SuccessResponse,
-}
+};
