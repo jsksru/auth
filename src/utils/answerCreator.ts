@@ -12,7 +12,8 @@ export const SuccessResponse = {
   dataObject: (res: Response, data: object) => res.status(200).json({ success: true, data }),
   dataArray: (res: Response, data: any[]) => res.status(200).json({ success: true, data }),
   messageOk: (res: Response, message: string) => res.status(200).json({ success: true, message }),
-  createdOk: (res: Response, message: string) => res.status(201).json({ error: true, message }),
+  createdOk: (res: Response, message: string) => res.status(201).json({ success: true, message }),
+  emptyOk: (res: Response) => res.status(200).json({ success: true }),
 };
 
 export default {
