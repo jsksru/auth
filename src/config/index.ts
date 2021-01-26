@@ -19,6 +19,7 @@ const config = {
     }
   },
   https: {
+    enable: Boolean(env.HTTPS_ENABLE as string || 'true'),
     key: env.HTTPS_KEY_FILE as string || './https_private_key.key',
     cert: env.HTTPS_CERT_FILE as string || './https_certificate.crt',
   },
