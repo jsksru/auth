@@ -5,18 +5,35 @@ import fs from 'fs';
 import app from './app';
 import mongoose from 'mongoose';
 
-// const PRIVATE_KEY = fs.readFileSync(config.https.key, 'utf8');
-// const CERTIFICATE = fs.readFileSync(config.https.cert, 'utf8');
-const API_PORT = config.api.port;
-const DB_STRING = config.db.connectionString;
-const isHttps = config.https.enable;
+const HTTP_ENABLE = config.api.mode.http.enable;
+const HTTP_PORT = config.api.mode.http.port;
 
-mongoose.connect(DB_STRING, { useNewUrlParser: true, useUnifiedTopology: true, serverSelectionTimeoutMS: 5000 })
+const HTTPS_ENABLE = config.api.mode.https.enable;
+const HTTPS_PORT = config.api.mode.https.port;
+const HTTPS_PRIVATE_KEY = fs.readFileSync(config.api.mode.https.key, 'utf8');
+const HTTPS_CERTIFICATE = fs.readFileSync(config.api.mode.https.cert, 'utf8');
+
+const DB_STRING = config.db.connectionString;
+
+mongoose.connect(DB_STRING, { useNewUrlParser: true, useUnifiedTopology: true})
   .then(() => {
-    // const server = https.createServer({ key: PRIVATE_KEY, cert: CERTIFICATE }, app);
-    const server = http.createServer(app);
-    server.listen(API_PORT, '0.0.0.0', () => console.log(`Server listening on ${API_PORT} port...`));
+    if (HTTP_ENABLE) {
+      http.createServer(app).listen(
+        HTTP_PORT,
+        '0.0.0.0',
+        () => console.log(`HTTP Server listening on ${HTTP_PORT} port...`),
+      );
+    }
+
+    if (HTTPS_ENABLE) {
+      https.createServer({cert: HTTPS_CERTIFICATE, key: HTTPS_PRIVATE_KEY}, app).listen(
+        HTTPS_PORT,
+        '0.0.0.0',
+        () => console.log(`HTTPS Server listening on ${HTTPS_PORT} port...`),
+      );
+    }
   })
   .catch(err => {
-    console.error('DB connection error:', err);
+    console.error('DB connection Error!', err);
+    process.exit(1);
   });
