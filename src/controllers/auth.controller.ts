@@ -19,7 +19,7 @@ export const login = async (req: Request, res: Response) => {
     if (!username) throw new Error('Empty username');
     if (!password) throw new Error('Empty password');
 
-    const user = await UserModel.findOne({ username: username.toLocaleLowerCase().trim() });
+    const user = await UserModel.findOne({ username: username.toLowerCase().trim() });
     if (!user) throw new Error('User not found');
 
     const verifyPassword = await bcrypt.compare(password, user.password);
